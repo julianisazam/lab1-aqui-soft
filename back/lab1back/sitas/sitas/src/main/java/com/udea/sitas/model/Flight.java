@@ -26,14 +26,14 @@ public class Flight implements Serializable {
     public Flight() {
     }
 
-    public Flight(Long id, String origin, String destination, LocalDate date, double price, String category, String baggageType) {
+    public Flight(Long id, String origin, String destination, LocalDate date, double price, String category, String baggage) {
         this.id = id;
         this.origin = origin;
         this.destination = destination;
         this.date = date;
         this.price = price;
         this.category = category;
-        this.baggage = baggageType;
+        this.baggage = baggage;
     }
 
 
@@ -85,12 +85,12 @@ public class Flight implements Serializable {
         this.category = category;
     }
 
-    public String getBaggageType() {
+    public String getBaggage() {
         return baggage;
     }
 
-    public void setBaggageType(String baggageType) {
-        this.baggage = baggageType;
+    public void setBaggage(String baggage) {
+        this.baggage = baggage;
     }
 
     //IDIOMS

@@ -85,3 +85,15 @@ select {
     background-color: white; 
 }
 
+.required-asterisk {
+    color: red;
+    margin-left: 4px;
+}
+
+.required-info {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+
