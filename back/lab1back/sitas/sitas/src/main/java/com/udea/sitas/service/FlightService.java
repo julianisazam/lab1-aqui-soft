@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-import static com.udea.sitas.util.StringUtil.formatStrings;
 
 @Service
 public class FlightService {
@@ -16,48 +14,42 @@ public class FlightService {
     @Autowired
     private FlightRepository flightRepository;
 
-    public List<Flight> findFlights(LocalDate startDate, LocalDate endDate, String origin, String destination,
-                                    Double maxPrice, LocalTime time, String baggageType, String travelClass) {
+    public List<Flight> findFlights(LocalDate startDate, LocalDate endDate, String origin, String destination, Double maxPrice, String category, String baggage) {
+        // Generar una clave de combinación de parámetros para usar en el switch
+        String key = (category != null ? "1" : "0") +
+                (baggage != null ? "1" : "0") +
+                (maxPrice != null ? "1" : "0");
 
-        // Construir la clave de combinación de parámetros, asumiendo que origin y destination siempre están presentes
-        String key = "11" + // Origen y destino siempre presentes
-                (maxPrice != null ? "1" : "0") +
-                (time != null ? "1" : "0") +
-                (baggageType != null ? "1" : "0") +
-                (travelClass != null ? "1" : "0");
-
-
-        origin = formatStrings(origin);
-        destination = formatStrings(destination);
-
-        System.out.println(key);
         switch (key) {
-            case "11111": // Todos los filtros excepto fechas
-                return flightRepository.findByOriginAndDestinationAndPriceLessThanEqualAndTimeAndBaggageTypeAndTravelClass(
-                        origin, destination, maxPrice, time, baggageType, travelClass);
-            case "11110": // Sin filtro de clase, excepto fechas
-                return flightRepository.findByOriginAndDestinationAndPriceLessThanEqualAndTimeAndBaggageType(
-                        origin, destination, maxPrice, time, baggageType);
-            case "11101": // Sin filtro de equipaje, excepto fechas
-                return flightRepository.findByOriginAndDestinationAndPriceLessThanEqualAndTimeAndTravelClass(
-                        origin, destination, maxPrice, time, travelClass);
-            case "11011": // Sin filtro de hora, excepto fechas
-                return flightRepository.findByOriginAndDestinationAndPriceLessThanEqualAndBaggageTypeAndTravelClass(
-                        origin, destination, maxPrice, baggageType, travelClass);
-            case "11001": // Sin filtro de hora ni equipaje, excepto fechas
-                return flightRepository.findByOriginAndDestinationAndPriceLessThanEqualAndTravelClass(
-                        origin, destination, maxPrice, travelClass);
-            case "11010": // Sin filtro de hora ni clase, excepto fechas
-                return flightRepository.findByOriginAndDestinationAndPriceLessThanEqualAndBaggageType(
-                        origin, destination, maxPrice, baggageType);
-            case "11100": // Sin filtro de equipaje ni clase, excepto fechas
-                return flightRepository.findByOriginAndDestinationAndPriceLessThanEqualAndTime(
-                        origin, destination, maxPrice, time);
-            case "11000": // Solo origen y destino (sin fechas)
+            case "111": // category, baggage, maxPrice no son nulos
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndCategoryContainingIgnoreCaseAndBaggageContainingIgnoreCaseAndPriceLessThanEqual(
+                        startDate, endDate, origin, destination, baggage, category, maxPrice);
+
+            case "110": // category, baggage no son nulos, maxPrice es nulo
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndCategoryContainingIgnoreCaseAndBaggageContainingIgnoreCase(
+                        startDate, endDate, origin, destination, category,baggage);
+
+            case "101": // category y maxPrice no son nulos, baggage es nulo
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndCategoryContainingIgnoreCaseAndPriceLessThanEqual(
+                        startDate, endDate, origin, destination, category, maxPrice);
+
+            case "011": // baggageType y maxPrice no son nulos, category es nulo
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndBaggageContainingIgnoreCaseAndPriceLessThanEqual(
+                        startDate, endDate, origin, destination, baggage, maxPrice);
+
+            case "100": // solo category no es nulo
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndCategoryContainingIgnoreCase(startDate, endDate,origin, destination,category);
+
+            case "010": // solo baggageType no es nulo
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndBaggageContainingIgnoreCase(startDate, endDate,origin, destination,baggage);
+
+            case "001": // solo maxPrice no es nulo
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndPriceLessThanEqual(startDate, endDate,origin, destination, maxPrice);
+
+            case "000": // todos son nulos
             default:
-                return flightRepository.findByOriginAndDestination(origin, destination);
-
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCase(startDate, endDate, origin, destination);
         }
-
     }
+
 }

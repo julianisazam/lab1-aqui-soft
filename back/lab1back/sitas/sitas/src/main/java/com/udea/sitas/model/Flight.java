@@ -1,13 +1,17 @@
 package com.udea.sitas.model;
-import jakarta.persistence.*;
+
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Objects;
 
+//Plan Old Java Object -- POJO
 @Entity
-@Table(name = "FLIGHT")
 public class Flight implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,25 +20,22 @@ public class Flight implements Serializable {
     private String destination;
     private LocalDate date;
     private double price;
-    private String baggageType;
-    private String travelClass;
-    private LocalTime time;
-
+    private String category;
+    private String baggage;
 
     public Flight() {
     }
 
-    public Flight(Long id, String origin, String destination, LocalDate date, double price,
-                  String baggageType, String travelClass, LocalTime time) {
+    public Flight(Long id, String origin, String destination, LocalDate date, double price, String category, String baggageType) {
         this.id = id;
         this.origin = origin;
         this.destination = destination;
         this.date = date;
         this.price = price;
-        this.baggageType = baggageType;
-        this.travelClass = travelClass;
-        this.time = time;
+        this.category = category;
+        this.baggage = baggageType;
     }
+
 
     public Long getId() {
         return id;
@@ -76,43 +77,33 @@ public class Flight implements Serializable {
         this.price = price;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public String getBaggageType() {
-        return baggageType;
+        return baggage;
     }
 
     public void setBaggageType(String baggageType) {
-        this.baggageType = baggageType;
+        this.baggage = baggageType;
     }
 
-    public String getTravelClass() {
-        return travelClass;
-    }
-
-    public void setTravelClass(String travelClass) {
-        this.travelClass = travelClass;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalTime time) {
-        this.time = time;
-    }
-
-    //IDOMS -> Patrones a nivel de códido
-
+    //IDIOMS
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Flight flight = (Flight) o;
-        return Objects.equals(id, flight.id);
+        if (!(o instanceof Flight flight)) return false;
+        return Objects.equals(getId(), flight.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(getId());
     }
 }
